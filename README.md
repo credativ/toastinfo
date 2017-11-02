@@ -1,7 +1,7 @@
 PostgreSQL toastinfo Extension
 ==============================
 
-This PostgreSQL exposes the internal storage structure of variable-length
+This PostgreSQL extension exposes the internal storage structure of variable-length
 datatypes, called `varlena`.
 
 The function `pg_toastinfo` describes the storage form of a datum:
@@ -14,6 +14,8 @@ The function `pg_toastinfo` describes the storage form of a datum:
 
 The function `pg_toastpointer` returns a varlena's `chunk_id` oid in the
 corresponding TOAST table. It returns NULL on non-varlena input.
+
+PostgreSQL versions 9.1 and later are supported.
 
 Example
 -------
@@ -39,7 +41,7 @@ INSERT INTO t VALUES ('extended-10', 'extended'); -- inline
 INSERT INTO t VALUES ('extended-10000', repeat('3',10000)); -- inline compressed
 INSERT INTO t VALUES ('extended-1000000', repeat('4',1000000)); -- toast compressed
 
-# SELECT a, length(b), pg_column_size(b), pg_toastinfo(b), pg_toastpointer(b) FROM t;
+SELECT a, length(b), pg_column_size(b), pg_toastinfo(b), pg_toastpointer(b) FROM t;
         a         │ length  │ pg_column_size │          pg_toastinfo           │ pg_toastpointer
 ──────────────────┼─────────┼────────────────┼─────────────────────────────────┼─────────────────
  null             │       ∅ │              ∅ │ null                            │               ∅

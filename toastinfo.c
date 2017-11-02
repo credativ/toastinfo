@@ -2,7 +2,26 @@
 #include <fmgr.h>
 #include <utils/lsyscache.h>
 #include <access/tuptoaster.h>
+#if PG_VERSION_NUM >= 90500
 #include <utils/expandeddatum.h>
+#endif
+
+#if PG_VERSION_NUM < 90400
+/*
+ * Macro to fetch the possibly-unaligned contents of an EXTERNAL datum
+ * into a local "struct varatt_external" toast pointer.  This should be
+ * just a memcpy, but some versions of gcc seem to produce broken code
+ * that assumes the datum contents are aligned.  Introducing an explicit
+ * intermediate "varattrib_1b_e *" variable seems to fix it.
+ */
+#define VARATT_EXTERNAL_GET_POINTER(toast_pointer, attr) \
+do { \
+	varattrib_1b_e *attre = (varattrib_1b_e *) (attr); \
+	Assert(VARATT_IS_EXTERNAL(attre)); \
+	Assert(VARSIZE_EXTERNAL(attre) == sizeof(toast_pointer) + VARHDRSZ_EXTERNAL); \
+	memcpy(&(toast_pointer), VARDATA_EXTERNAL(attre), sizeof(toast_pointer)); \
+} while (0)
+#endif
 
 PG_MODULE_MAGIC;
 
@@ -13,43 +32,52 @@ toast_datum_info(Datum value)
 {
 	struct varlena *attr = (struct varlena *) DatumGetPointer(value);
 
+#if PG_VERSION_NUM >= 90400
 	if (VARATT_IS_EXTERNAL_ONDISK(attr))
+#else
+	if (VARATT_IS_EXTERNAL(attr))
+#endif
 	{
 		struct varatt_external toast_pointer;
 
 		VARATT_EXTERNAL_GET_POINTER(toast_pointer, attr);
 
 		if (toast_pointer.va_extsize < toast_pointer.va_rawsize - VARHDRSZ)
-			return psprintf("toasted varlena, compressed");
+			return "toasted varlena, compressed";
 		else
-			return psprintf("toasted varlena, uncompressed");
+			return "toasted varlena, uncompressed";
 	}
+#if PG_VERSION_NUM >= 90400
 	else if (VARATT_IS_EXTERNAL_INDIRECT(attr))
 	{
 		struct varatt_indirect toast_pointer;
 
 		VARATT_EXTERNAL_GET_POINTER(toast_pointer, attr);
 
-		return psprintf("indirect in-memory varlena");
+		return "indirect in-memory varlena";
 	}
+#endif
+#if PG_VERSION_NUM >= 90500
 	else if (VARATT_IS_EXTERNAL_EXPANDED(attr))
 	{
-		return psprintf("expanded in-memory varlena");
+		return "expanded in-memory varlena";
 	}
+#endif
 	else if (VARATT_IS_SHORT(attr))
 	{
-		return psprintf("short inline varlena");
+		return "short inline varlena";
 	}
 	else
 	{
 		if (VARATT_IS_COMPRESSED(attr))
-			return psprintf("long inline varlena, compressed");
+			return "long inline varlena, compressed";
 		else
-			return psprintf("long inline varlena, uncompressed");
+			return "long inline varlena, uncompressed";
 	}
 }
 
 PG_FUNCTION_INFO_V1 (pg_toastinfo);
+Datum pg_toastinfo (PG_FUNCTION_ARGS);
 
 Datum
 pg_toastinfo (PG_FUNCTION_ARGS)
@@ -101,6 +129,7 @@ pg_toastinfo (PG_FUNCTION_ARGS)
 }
 
 PG_FUNCTION_INFO_V1 (pg_toastpointer);
+Datum pg_toastpointer (PG_FUNCTION_ARGS);
 
 Datum
 pg_toastpointer (PG_FUNCTION_ARGS)
@@ -132,7 +161,11 @@ pg_toastpointer (PG_FUNCTION_ARGS)
 
 	attr = (struct varlena *) DatumGetPointer(value);
 
+#if PG_VERSION_NUM >= 90400
 	if (!VARATT_IS_EXTERNAL_ONDISK(attr)) /* non-toasted varlena, return NULL */
+#else
+	if (!VARATT_IS_EXTERNAL(attr)) /* non-toasted varlena, return NULL */
+#endif
 		PG_RETURN_NULL();
 
 	VARATT_EXTERNAL_GET_POINTER(toast_pointer, attr);
