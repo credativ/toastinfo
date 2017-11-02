@@ -17,6 +17,8 @@ corresponding TOAST table. It returns NULL on non-varlena input.
 
 PostgreSQL versions 9.1 and later are supported.
 
+[![Build Status](https://travis-ci.org/credativ/toastinfo.svg?branch=master)](https://travis-ci.org/credativ/toastinfo)
+
 Example
 -------
 

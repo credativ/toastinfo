@@ -1,0 +1,52 @@
+# run the testsuite on travis-ci.com
+---
+# versions to run on
+env:
+  - PG_SUPPORTED_VERSIONS=9.1
+  - PG_SUPPORTED_VERSIONS=9.2
+  - PG_SUPPORTED_VERSIONS=9.3
+  - PG_SUPPORTED_VERSIONS=9.4
+  - PG_SUPPORTED_VERSIONS=9.5
+  - PG_SUPPORTED_VERSIONS=9.6
+  - PG_SUPPORTED_VERSIONS=10
+  - PG_SUPPORTED_VERSIONS=11
+
+language: C
+dist: trusty
+sudo: required
+
+before_install:
+  # apt.postgresql.org is already configured, we just need to add devel
+  - |
+    DIST=trusty-pgdg
+    case $PG_SUPPORTED_VERSIONS in
+      11)
+      # update pgdg-source.list
+      sudo sed -i -e "s/pgdg.*/pgdg-testing main $PG_SUPPORTED_VERSIONS/" /etc/apt/sources.list.d/pgdg*.list
+      DIST=trusty-pgdg-testing
+      ;;
+    esac
+  - sudo apt-get -qq update
+
+install:
+  - export DEBIAN_FRONTEND=noninteractive # suppress warnings about deprecated PostgreSQL versions
+  # trusty's pg_buildext doesn't cope with PG version numbers >= 10, so upgrade that to -pgdg
+  - sudo apt-get install postgresql-server-dev-$PG_SUPPORTED_VERSIONS postgresql-server-dev-all/$DIST
+  # install PostgreSQL $PG_SUPPORTED_VERSIONS if not there yet
+  - |
+    if [ ! -x /usr/lib/postgresql/$PG_SUPPORTED_VERSIONS/bin/postgres ]; then
+      sudo apt-get install postgresql-common # upgrade pg-common first ...
+      sudo /etc/init.d/postgresql stop # ... so we can stop postgresql again before installing the server
+      sudo apt-get install postgresql-$PG_SUPPORTED_VERSIONS
+    fi
+  # stop the travis-provided cluster
+  - sudo /etc/init.d/postgresql stop
+  - pg_lsclusters
+  - dpkg -l postgresql\* | cat
+
+script:
+  - PG_CONFIG=/usr/lib/postgresql/$PG_SUPPORTED_VERSIONS/bin/pg_config
+  - make clean PG_CONFIG=$PG_CONFIG
+  - make PG_CONFIG=$PG_CONFIG
+  - sudo make install PG_CONFIG=$PG_CONFIG
+  - pg_virtualenv -v $PG_SUPPORTED_VERSIONS make installcheck PG_CONFIG=$PG_CONFIG || cat regression.diffs
