@@ -1,0 +1,3 @@
+default_version = '1'
+comment = 'show details on toasted datums'
+relocatable = true
