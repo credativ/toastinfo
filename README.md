@@ -42,14 +42,15 @@ INSERT INTO t VALUES ('extended-1000000', repeat('4',1000000)); -- toast compres
 # SELECT a, length(b), pg_column_size(b), pg_toastinfo(b), pg_toastpointer(b) FROM t;
         a         │ length  │ pg_column_size │          pg_toastinfo           │ pg_toastpointer
 ──────────────────┼─────────┼────────────────┼─────────────────────────────────┼─────────────────
- default          │      10 │             11 │ short inline varlena            │               ∅
- external-10      │      11 │             12 │ short inline varlena            │               ∅
- external-10000   │   11000 │          11000 │ toasted varlena, uncompressed   │           16796
- external-1000000 │ 1100000 │        1100000 │ toasted varlena, uncompressed   │           16797
- extended-10      │      11 │             12 │ short inline varlena            │               ∅
- extended-10000   │   11000 │            149 │ long inline varlena, compressed │               ∅
- extended-1000000 │ 1100000 │          12611 │ toasted varlena, compressed     │           16798
-(7 rows)
+ null             │       ∅ │              ∅ │ null                            │               ∅
+ default          │       7 │              8 │ short inline varlena            │               ∅
+ external-10      │       8 │              9 │ short inline varlena            │               ∅
+ external-10000   │   10000 │          10000 │ toasted varlena, uncompressed   │           24599
+ external-1000000 │ 1000000 │        1000000 │ toasted varlena, uncompressed   │           24600
+ extended-10      │       8 │              9 │ short inline varlena            │               ∅
+ extended-10000   │   10000 │            125 │ long inline varlena, compressed │               ∅
+ extended-1000000 │ 1000000 │          11452 │ toasted varlena, compressed     │           24601
+(8 rows)
 ```
 
 License
