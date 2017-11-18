@@ -1,0 +1,29 @@
+Source: toastinfo
+Section: database
+Priority: optional
+Maintainer: Debian PostgreSQL Maintainers <pkg-postgresql-public@lists.alioth.debian.org>
+Uploaders: Christoph Berg <myon@debian.org>
+Build-Depends: debhelper (>= 9), postgresql-server-dev-all (>= 153~)
+Standards-Version: 4.1.1
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-postgresql/toastinfo.git/
+Vcs-Git: https://anonscm.debian.org/git/pkg-postgresql/toastinfo.git
+
+Package: postgresql-PGVERSION-toastinfo
+Architecture: any
+Depends: postgresql-PGVERSION, ${misc:Depends}, ${shlibs:Depends}
+Description: Show storage structure of varlena datatypes in PostgreSQL
+ This PostgreSQL extension exposes the internal storage structure of
+ variable-length datatypes, called varlena.
+ .
+ The function pg_toastinfo describes the storage form of a datum:
+ .
+  * null for NULLs
+  * ordinary for non-varlena datatypes
+  * short inline varlena for varlena values up to 126 bytes (1 byte header)
+  * long inline varlena, (un)compressed for varlena values up to 1GiB
+    (4 bytes header)
+  * toasted varlena, (un)compressed for varlena values up to 1GiB stored in
+    TOAST tables
+ .
+ The function pg_toastpointer returns a varlena's chunk_id oid in the
+ corresponding TOAST table. It returns NULL on non-varlena input.
