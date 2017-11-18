@@ -57,6 +57,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- manually retrieve the toast content for some datum
-\x
-SELECT a, chunk_seq, chunk_data FROM t JOIN t_toast ON pg_toastpointer(t.b) = t_toast.chunk_id WHERE t.a = 'external-10000';
+-- manually retrieve the toast content for some datums
+SELECT a, substr(chunk_data, 1, 10) FROM t JOIN t_toast ON pg_toastpointer(t.b) = t_toast.chunk_id WHERE chunk_seq = 1 ORDER BY a;
