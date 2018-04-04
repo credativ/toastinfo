@@ -1,0 +1,9 @@
+The SPEC file found here is intended to be
+used with PGDG PostgreSQL packages. To build a
+toastinfo package, you have to specify the target
+PostgreSQL PGDG release and the installation directory,
+where the packages can be found.
+
+Example:
+
+rpmbuild -D"pgdgversion 10" -D "pginstdir /usr/pgsql-10/" -ba toastinfo.spec
