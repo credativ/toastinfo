@@ -9,9 +9,9 @@ Homepage: https://github.com/credativ/toastinfo
 Vcs-Browser: https://github.com/credativ/toastinfo
 Vcs-Git: https://github.com/credativ/toastinfo.git
 
-Package: postgresql-11-toastinfo
+Package: postgresql-12-toastinfo
 Architecture: any
-Depends: postgresql-11, ${misc:Depends}, ${shlibs:Depends}
+Depends: postgresql-12, ${misc:Depends}, ${shlibs:Depends}
 Description: Show storage structure of varlena datatypes in PostgreSQL
  This PostgreSQL extension exposes the internal storage structure of
  variable-length datatypes, called varlena.
@@ -28,4 +28,3 @@ Description: Show storage structure of varlena datatypes in PostgreSQL
  .
  The function pg_toastpointer returns a varlena's chunk_id oid in the
  corresponding TOAST table. It returns NULL on non-varlena input.
-
