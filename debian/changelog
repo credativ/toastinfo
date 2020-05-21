@@ -1,12 +1,16 @@
-toastinfo (1.1-5) UNRELEASED; urgency=medium
+toastinfo (1.2-1) unstable; urgency=medium
 
+  [ Debian Janitor ]
   * Upgrade to newer source format 3.0 (quilt).
   * Bump debhelper from deprecated 9 to 10.
   * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
     Repository-Browse.
   * Update standards version to 4.5.0, no changes needed.
 
- -- Debian Janitor <janitor@jelmer.uk>  Tue, 05 May 2020 06:33:54 +0000
+  [ Christoph Berg ]
+  * Support PostgreSQL 13.
+
+ -- Christoph Berg <myon@debian.org>  Thu, 21 May 2020 18:51:25 +0200
 
 toastinfo (1.1-4) unstable; urgency=medium
 

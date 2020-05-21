@@ -1,7 +1,7 @@
 /*
  Author: Christoph Berg <cb@df7cb.de>
 
- Copyright: Copyright (c) 1996-2017, The PostgreSQL Global Development Group
+ Copyright: Copyright (c) 1996-2020, The PostgreSQL Global Development Group
 
  Permission to use, copy, modify, and distribute this software and its
  documentation for any purpose, without fee, and without a written agreement
@@ -24,7 +24,11 @@
 #include <postgres.h>
 #include <fmgr.h>
 #include <utils/lsyscache.h>
+#if PG_VERSION_NUM >= 130000
+#include <access/detoast.h>
+#else
 #include <access/tuptoaster.h>
+#endif
 #if PG_VERSION_NUM >= 90500
 #include <utils/expandeddatum.h>
 #endif
