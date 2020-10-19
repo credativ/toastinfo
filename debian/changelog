@@ -1,3 +1,13 @@
+toastinfo (1.2-2) unstable; urgency=medium
+
+  * Upload for PostgreSQL 13.
+  * Use dh --with pgxs.
+  * R³: no.
+  * DH 13.
+  * debian/tests: Use 'make' instead of postgresql-server-dev-all.
+
+ -- Christoph Berg <myon@debian.org>  Mon, 19 Oct 2020 22:30:28 +0200
+
 toastinfo (1.2-1) unstable; urgency=medium
 
   [ Debian Janitor ]
