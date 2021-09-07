@@ -34,11 +34,13 @@ INSERT INTO t VALUES ('default', 'default');
 
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTERNAL;
 INSERT INTO t VALUES ('external-10', 'external'); -- inline
+INSERT INTO t VALUES ('external-200', repeat('x',200)); -- inline uncompressed
 INSERT INTO t VALUES ('external-10000', repeat('1',10000)); -- toast uncompressed
 INSERT INTO t VALUES ('external-1000000', repeat('2',1000000)); -- toast uncompressed
 
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTENDED;
 INSERT INTO t VALUES ('extended-10', 'extended'); -- inline
+INSERT INTO t VALUES ('extended-200', repeat('x',200)); -- inline uncompressed
 INSERT INTO t VALUES ('extended-10000', repeat('3',10000)); -- inline compressed
 INSERT INTO t VALUES ('extended-1000000', repeat('4',1000000)); -- toast compressed
 

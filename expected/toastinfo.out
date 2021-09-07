@@ -40,27 +40,31 @@ INSERT INTO t VALUES ('null', NULL);
 INSERT INTO t VALUES ('default', 'default');
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTERNAL;
 INSERT INTO t VALUES ('external-10', 'external'); -- inline
+INSERT INTO t VALUES ('external-200', repeat('x',200)); -- inline uncompressed
 INSERT INTO t VALUES ('external-10000', repeat('1',10000)); -- toast uncompressed
 INSERT INTO t VALUES ('external-1000000', repeat('2',1000000)); -- toast uncompressed
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTENDED;
 INSERT INTO t VALUES ('extended-10', 'extended'); -- inline
+INSERT INTO t VALUES ('extended-200', repeat('x',200)); -- inline compressed
 INSERT INTO t VALUES ('extended-10000', repeat('3',10000)); -- inline compressed
 INSERT INTO t VALUES ('extended-1000000', repeat('4',1000000)); -- toast compressed
 -- call pg_toastinfo and pg_toastpointer twice in parallel to check the typlen caching
 -- for pg_toastinfo, just show if an oid was returned or now
 SELECT a, pg_toastinfo(a) a, pg_toastpointer(a) > 0 aptr,
           pg_toastinfo(b) b, pg_toastpointer(b) > 0 bptr FROM t;
-        a         |          a           | aptr |                b                | bptr 
-------------------+----------------------+------+---------------------------------+------
- null             | short inline varlena |      | null                            | 
- default          | short inline varlena |      | short inline varlena            | 
- external-10      | short inline varlena |      | short inline varlena            | 
- external-10000   | short inline varlena |      | toasted varlena, uncompressed   | t
- external-1000000 | short inline varlena |      | toasted varlena, uncompressed   | t
- extended-10      | short inline varlena |      | short inline varlena            | 
- extended-10000   | short inline varlena |      | long inline varlena, compressed | 
- extended-1000000 | short inline varlena |      | toasted varlena, compressed     | t
-(8 rows)
+        a         |          a           | aptr |                 b                 | bptr 
+------------------+----------------------+------+-----------------------------------+------
+ null             | short inline varlena |      | null                              | 
+ default          | short inline varlena |      | short inline varlena              | 
+ external-10      | short inline varlena |      | short inline varlena              | 
+ external-200     | short inline varlena |      | long inline varlena, uncompressed | 
+ external-10000   | short inline varlena |      | toasted varlena, uncompressed     | t
+ external-1000000 | short inline varlena |      | toasted varlena, uncompressed     | t
+ extended-10      | short inline varlena |      | short inline varlena              | 
+ extended-200     | short inline varlena |      | long inline varlena, uncompressed | 
+ extended-10000   | short inline varlena |      | long inline varlena, compressed   | 
+ extended-1000000 | short inline varlena |      | toasted varlena, compressed       | t
+(10 rows)
 
 -- give t's toast table a predictable name we can use below
 DO $$
