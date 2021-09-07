@@ -1,7 +1,7 @@
 /*
  Author: Christoph Berg <cb@df7cb.de>
 
- Copyright: Copyright (c) 1996-2020, The PostgreSQL Global Development Group
+ Copyright: Copyright (c) 1996-2021, The PostgreSQL Global Development Group
 
  Permission to use, copy, modify, and distribute this software and its
  documentation for any purpose, without fee, and without a written agreement
@@ -31,6 +31,9 @@
 #endif
 #if PG_VERSION_NUM >= 90500
 #include <utils/expandeddatum.h>
+#endif
+#if PG_VERSION_NUM >= 140000
+#include <access/toast_compression.h>
 #endif
 
 #if PG_VERSION_NUM < 90400
@@ -74,7 +77,19 @@ toast_datum_info(Datum value)
 #else
 		if (toast_pointer.va_extsize < toast_pointer.va_rawsize - VARHDRSZ)
 #endif
+#if PG_VERSION_NUM >= 140000
+			switch (VARATT_EXTERNAL_GET_COMPRESS_METHOD(toast_pointer))
+			{
+				case TOAST_PGLZ_COMPRESSION_ID:
+					return "toasted varlena, compressed (pglz)";
+				case TOAST_LZ4_COMPRESSION_ID:
+					return "toasted varlena, compressed (lz4)";
+				default:
+					return "toasted varlena, compressed (invalid/unknown method)";
+			}
+#else
 			return "toasted varlena, compressed";
+#endif
 		else
 			return "toasted varlena, uncompressed";
 	}
@@ -101,7 +116,19 @@ toast_datum_info(Datum value)
 	else
 	{
 		if (VARATT_IS_COMPRESSED(attr))
+#if PG_VERSION_NUM >= 140000
+			switch (VARDATA_COMPRESSED_GET_COMPRESS_METHOD(attr))
+			{
+				case TOAST_PGLZ_COMPRESSION_ID:
+					return "long inline varlena, compressed (pglz)";
+				case TOAST_LZ4_COMPRESSION_ID:
+					return "long inline varlena, compressed (lz4)";
+				default:
+					return "long inline varlena, compressed (invalid/unknown method)";
+			}
+#else
 			return "long inline varlena, compressed";
+#endif
 		else
 			return "long inline varlena, uncompressed";
 	}

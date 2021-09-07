@@ -51,29 +51,26 @@ INSERT INTO t VALUES ('extended-200', repeat('x', 200)); -- long inline varlena,
 INSERT INTO t VALUES ('extended-10000', repeat('x', 10000)); -- long inline varlena, compressed (pglz)
 INSERT INTO t VALUES ('extended-1000000', repeat('x', 1000000)); -- toasted varlena, compressed (pglz)
 ALTER TABLE t ALTER COLUMN b SET COMPRESSION lz4;
-ERROR:  syntax error at or near "COMPRESSION"
-LINE 1: ALTER TABLE t ALTER COLUMN b SET COMPRESSION lz4;
-                                         ^
 INSERT INTO t VALUES ('extended-10000', repeat('x', 10000)); -- long inline varlena, compressed (lz4)
 INSERT INTO t VALUES ('extended-1000000', repeat('x', 1000000)); -- toasted varlena, compressed (lz4)
 -- call pg_toastinfo and pg_toastpointer twice in parallel to check the typlen caching
 -- for pg_toastinfo, just show if an oid was returned or now
 SELECT a, pg_toastinfo(a) a, pg_toastpointer(a) > 0 aptr,
           pg_toastinfo(b) b, pg_toastpointer(b) > 0 bptr FROM t;
-        a         |          a           | aptr |                 b                 | bptr 
-------------------+----------------------+------+-----------------------------------+------
- null             | short inline varlena |      | null                              | 
- default          | short inline varlena |      | short inline varlena              | 
- external-10      | short inline varlena |      | short inline varlena              | 
- external-200     | short inline varlena |      | long inline varlena, uncompressed | 
- external-10000   | short inline varlena |      | toasted varlena, uncompressed     | t
- external-1000000 | short inline varlena |      | toasted varlena, uncompressed     | t
- extended-10      | short inline varlena |      | short inline varlena              | 
- extended-200     | short inline varlena |      | long inline varlena, uncompressed | 
- extended-10000   | short inline varlena |      | long inline varlena, compressed   | 
- extended-1000000 | short inline varlena |      | toasted varlena, compressed       | t
- extended-10000   | short inline varlena |      | long inline varlena, compressed   | 
- extended-1000000 | short inline varlena |      | toasted varlena, compressed       | t
+        a         |          a           | aptr |                   b                    | bptr 
+------------------+----------------------+------+----------------------------------------+------
+ null             | short inline varlena |      | null                                   | 
+ default          | short inline varlena |      | short inline varlena                   | 
+ external-10      | short inline varlena |      | short inline varlena                   | 
+ external-200     | short inline varlena |      | long inline varlena, uncompressed      | 
+ external-10000   | short inline varlena |      | toasted varlena, uncompressed          | t
+ external-1000000 | short inline varlena |      | toasted varlena, uncompressed          | t
+ extended-10      | short inline varlena |      | short inline varlena                   | 
+ extended-200     | short inline varlena |      | long inline varlena, uncompressed      | 
+ extended-10000   | short inline varlena |      | long inline varlena, compressed (pglz) | 
+ extended-1000000 | short inline varlena |      | toasted varlena, compressed (pglz)     | t
+ extended-10000   | short inline varlena |      | long inline varlena, compressed (lz4)  | 
+ extended-1000000 | short inline varlena |      | toasted varlena, compressed (lz4)      | t
 (12 rows)
 
 -- give t's toast table a predictable name we can use below

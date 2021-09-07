@@ -1,3 +1,6 @@
+-- toastinfo.out: PG <= 13
+-- toastinfo_1.out: PG14+
+
 CREATE EXTENSION toastinfo;
 
 CREATE TABLE x (
@@ -25,24 +28,28 @@ SELECT pg_toastpointer(int) AS int,
 FROM x;
 
 CREATE TABLE t (
-	a text,
-	b text
+       a text,
+       b text
 );
 
 INSERT INTO t VALUES ('null', NULL);
 INSERT INTO t VALUES ('default', 'default');
 
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTERNAL;
-INSERT INTO t VALUES ('external-10', 'external'); -- inline
-INSERT INTO t VALUES ('external-200', repeat('x',200)); -- inline uncompressed
-INSERT INTO t VALUES ('external-10000', repeat('1',10000)); -- toast uncompressed
-INSERT INTO t VALUES ('external-1000000', repeat('2',1000000)); -- toast uncompressed
+INSERT INTO t VALUES ('external-10', 'external'); -- short inline varlena
+INSERT INTO t VALUES ('external-200', repeat('x', 200)); -- long inline varlena, uncompressed
+INSERT INTO t VALUES ('external-10000', repeat('x', 10000)); -- toasted varlena, uncompressed
+INSERT INTO t VALUES ('external-1000000', repeat('x', 1000000)); -- toasted varlena, uncompressed
 
 ALTER TABLE t ALTER COLUMN b SET STORAGE EXTENDED;
-INSERT INTO t VALUES ('extended-10', 'extended'); -- inline
-INSERT INTO t VALUES ('extended-200', repeat('x',200)); -- inline uncompressed
-INSERT INTO t VALUES ('extended-10000', repeat('3',10000)); -- inline compressed
-INSERT INTO t VALUES ('extended-1000000', repeat('4',1000000)); -- toast compressed
+INSERT INTO t VALUES ('extended-10', 'extended'); -- short inline varlena
+INSERT INTO t VALUES ('extended-200', repeat('x', 200)); -- long inline varlena, uncompressed
+INSERT INTO t VALUES ('extended-10000', repeat('x', 10000)); -- long inline varlena, compressed (pglz)
+INSERT INTO t VALUES ('extended-1000000', repeat('x', 1000000)); -- toasted varlena, compressed (pglz)
+
+ALTER TABLE t ALTER COLUMN b SET COMPRESSION lz4;
+INSERT INTO t VALUES ('extended-10000', repeat('x', 10000)); -- long inline varlena, compressed (lz4)
+INSERT INTO t VALUES ('extended-1000000', repeat('x', 1000000)); -- toasted varlena, compressed (lz4)
 
 -- call pg_toastinfo and pg_toastpointer twice in parallel to check the typlen caching
 -- for pg_toastinfo, just show if an oid was returned or now
