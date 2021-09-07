@@ -69,7 +69,11 @@ toast_datum_info(Datum value)
 
 		VARATT_EXTERNAL_GET_POINTER(toast_pointer, attr);
 
+#if PG_VERSION_NUM >= 90400
+		if (VARATT_EXTERNAL_IS_COMPRESSED(toast_pointer))
+#else
 		if (toast_pointer.va_extsize < toast_pointer.va_rawsize - VARHDRSZ)
+#endif
 			return "toasted varlena, compressed";
 		else
 			return "toasted varlena, uncompressed";
