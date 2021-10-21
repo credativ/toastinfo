@@ -10,9 +10,9 @@ Homepage: https://github.com/credativ/toastinfo
 Vcs-Browser: https://github.com/credativ/toastinfo
 Vcs-Git: https://github.com/credativ/toastinfo.git
 
-Package: postgresql-13-toastinfo
+Package: postgresql-14-toastinfo
 Architecture: any
-Depends: postgresql-13, ${misc:Depends}, ${shlibs:Depends}
+Depends: postgresql-14, ${misc:Depends}, ${shlibs:Depends}
 Description: Show storage structure of varlena datatypes in PostgreSQL
  This PostgreSQL extension exposes the internal storage structure of
  variable-length datatypes, called varlena.
