@@ -1,2 +1,2 @@
 version=4
-https://github.com/credativ/toastinfo/releases .*/v(.*).tar.gz
+https://github.com/credativ/toastinfo/tags .*/v(.*).tar.gz
