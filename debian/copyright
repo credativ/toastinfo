@@ -1,9 +1,9 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: toastinfo
-Source: https://github.com/credativ/toastinfo
+Source: https://github.com/df7cb/toastinfo
 
 Files: *
-Copyright: Copyright (c) 1996-2017, The PostgreSQL Global Development Group
+Copyright: Copyright (c) 1996-2023, The PostgreSQL Global Development Group
 License: PostgreSQL
  Permission to use, copy, modify, and distribute this software and its
  documentation for any purpose, without fee, and without a written agreement

@@ -6,9 +6,9 @@ Uploaders: Christoph Berg <myon@debian.org>
 Build-Depends: debhelper-compat (= 13), postgresql-all (>= 217~)
 Standards-Version: 4.6.1
 Rules-Requires-Root: no
-Homepage: https://github.com/credativ/toastinfo
-Vcs-Browser: https://github.com/credativ/toastinfo
-Vcs-Git: https://github.com/credativ/toastinfo.git
+Homepage: https://github.com/df7cb/toastinfo
+Vcs-Browser: https://github.com/df7cb/toastinfo
+Vcs-Git: https://github.com/df7cb/toastinfo.git
 
 Package: postgresql-15-toastinfo
 Architecture: any

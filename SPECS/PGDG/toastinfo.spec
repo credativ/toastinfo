@@ -5,8 +5,8 @@ Summary:	A PostgreSQL extension module to view toast value information.
 
 Group:		database
 License:	BSD
-URL:		https://github.com/credativ/toastinfo
-Source0:	https://github.com/credativ/toastinfo/archive/v%{version}.tar.gz
+URL:		https://github.com/df7cb/toastinfo
+Source0:	https://github.com/df7cb/toastinfo/archive/v%{version}.tar.gz
 
 BuildRequires:	postgresql%{pgdgversion}-devel
 Requires:	postgresql%{pgdgversion}
