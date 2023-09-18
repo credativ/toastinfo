@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian PostgreSQL Maintainers <team+postgresql@tracker.debian.org>
 Uploaders: Christoph Berg <myon@debian.org>
 Build-Depends: debhelper-compat (= 13), postgresql-all (>= 217~)
-Standards-Version: 4.6.1
+Standards-Version: 4.6.2
 Rules-Requires-Root: no
 Homepage: https://github.com/df7cb/toastinfo
 Vcs-Browser: https://github.com/df7cb/toastinfo
@@ -12,7 +12,7 @@ Vcs-Git: https://github.com/df7cb/toastinfo.git
 
 Package: postgresql-PGVERSION-toastinfo
 Architecture: any
-Depends: postgresql-PGVERSION, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${postgresql:Depends}, ${misc:Depends}, ${shlibs:Depends}
 Description: Show storage structure of varlena datatypes in PostgreSQL
  This PostgreSQL extension exposes the internal storage structure of
  variable-length datatypes, called varlena.
