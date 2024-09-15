@@ -1,3 +1,11 @@
+toastinfo (1.5-2) unstable; urgency=medium
+
+  * Upload for PostgreSQL 17.
+  * Restrict to 64-bit architectures.
+  * Mark postgresql-all as <!nocheck>.
+
+ -- Christoph Berg <myon@debian.org>  Sun, 15 Sep 2024 14:56:02 +0200
+
 toastinfo (1.5-1) unstable; urgency=medium
 
   * Upload for PostgreSQL 16.
